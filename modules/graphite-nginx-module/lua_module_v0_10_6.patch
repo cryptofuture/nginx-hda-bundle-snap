@@ -1,0 +1,123 @@
+diff --git a/config b/config
+index 0f2749d..7b8d1eb 100644
+--- a/config
++++ b/config
+@@ -360,6 +360,7 @@ HTTP_LUA_SRCS=" \
+             $ngx_addon_dir/src/ngx_http_lua_ssl_session_storeby.c \
+             $ngx_addon_dir/src/ngx_http_lua_ssl_session_fetchby.c \
+             $ngx_addon_dir/src/ngx_http_lua_ssl.c \
++            $ngx_addon_dir/src/ngx_http_lua_graphite.c \
+             "
+ 
+ HTTP_LUA_DEPS=" \
+@@ -420,6 +421,7 @@ HTTP_LUA_DEPS=" \
+             $ngx_addon_dir/src/ngx_http_lua_ssl_session_storeby.h \
+             $ngx_addon_dir/src/ngx_http_lua_ssl_session_fetchby.h \
+             $ngx_addon_dir/src/ngx_http_lua_ssl.h \
++            $ngx_addon_dir/src/ngx_http_lua_graphite.h \
+             "
+ 
+ CFLAGS="$CFLAGS -DNDK_SET_VAR"
+diff --git a/src/ngx_http_lua_graphite.c b/src/ngx_http_lua_graphite.c
+new file mode 100644
+index 0000000..af48a53
+--- /dev/null
++++ b/src/ngx_http_lua_graphite.c
+@@ -0,0 +1,51 @@
++#ifndef DDEBUG
++#define DDEBUG 0
++#endif
++#include "ddebug.h"
++
++
++#include "ngx_http_graphite_module.h"
++#include "ngx_http_lua_graphite.h"
++#include "ngx_http_lua_util.h"
++
++
++static int ngx_http_lua_graphite(lua_State *L);
++
++
++void
++ngx_http_lua_inject_graphite_api(lua_State *L)
++{
++    lua_pushcfunction(L, ngx_http_lua_graphite);
++    lua_setfield(L, -2, "graphite");
++}
++
++
++static int
++ngx_http_lua_graphite(lua_State *L) {
++
++    size_t n = lua_gettop(L);
++    if (n != 2 && n != 3) {
++        return luaL_error(L, "ngx.graphite expecting 2 or 3 arguments got %d", n);
++    }
++
++    ngx_http_request_t *r;
++    r = ngx_http_lua_get_req(L);
++
++    if (r == NULL) {
++        return luaL_error(L, "no request object found");
++    }
++
++    ngx_str_t name;
++    name.data = (u_char*)lua_tolstring(L, 1, &name.len);
++    if (name.data == NULL)
++        return 0;
++
++    double value = lua_tonumber(L, 2);
++    const char *config = NULL;
++    if (n == 3)
++        config = lua_tostring(L, 3);
++
++    ngx_http_graphite(r, &name, value, config);
++
++    return 0;
++}
+diff --git a/src/ngx_http_lua_graphite.h b/src/ngx_http_lua_graphite.h
+new file mode 100644
+index 0000000..cf76efa
+--- /dev/null
++++ b/src/ngx_http_lua_graphite.h
+@@ -0,0 +1,11 @@
++#ifndef NGX_HTTP_LUA_GRAPHITE_H
++#define NGX_HTTP_LUA_GRAPHITE_H
++
++#include "ngx_http_lua_common.h"
++
++
++void ngx_http_lua_inject_graphite_api(lua_State *L);
++
++
++#endif /* NGX_HTTP_LUA_GRAPHITE_H */
++
+diff --git a/src/ngx_http_lua_util.c b/src/ngx_http_lua_util.c
+index 7f59833..43ca208 100644
+--- a/src/ngx_http_lua_util.c
++++ b/src/ngx_http_lua_util.c
+@@ -52,6 +52,7 @@
+ #include "ngx_http_lua_ssl_certby.h"
+ #include "ngx_http_lua_ssl.h"
+ 
++#include "ngx_http_lua_graphite.h"
+ 
+ #if 1
+ #undef ngx_http_lua_probe_info
+@@ -709,7 +710,7 @@ static void
+ ngx_http_lua_inject_ngx_api(lua_State *L, ngx_http_lua_main_conf_t *lmcf,
+     ngx_log_t *log)
+ {
+-    lua_createtable(L, 0 /* narr */, 116 /* nrec */);    /* ngx.* */
++    lua_createtable(L, 0 /* narr */, 117 /* nrec */);    /* ngx.* */
+ 
+     lua_pushcfunction(L, ngx_http_lua_get_raw_phase_context);
+     lua_setfield(L, -2, "_phase_ctx");
+@@ -743,6 +744,7 @@ ngx_http_lua_inject_ngx_api(lua_State *L, ngx_http_lua_main_conf_t *lmcf,
+     ngx_http_lua_inject_timer_api(L);
+     ngx_http_lua_inject_config_api(L);
+     ngx_http_lua_inject_worker_api(L);
++    ngx_http_lua_inject_graphite_api(L);
+ 
+     ngx_http_lua_inject_misc_api(L);
+ 

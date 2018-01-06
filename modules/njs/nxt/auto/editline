@@ -1,0 +1,59 @@
+# Copyright (C) Dmitry Volyntsev
+# Copyright (C) NGINX, Inc.
+
+nxt_found=no
+
+nxt_feature="editline library"
+nxt_feature_name=NXT_HAVE_EDITLINE
+nxt_feature_run=no
+nxt_feature_incs="-I/usr/include/editline"
+nxt_feature_libs="-ledit"
+nxt_feature_test="#include <stdio.h>
+                  #include <readline.h>
+
+                 int main(void) {
+                     add_history(NULL);
+                     return 0;
+                 }"
+. ${NXT_AUTO}feature
+
+if [ $nxt_found = no ]; then
+
+    # FreeBSD port
+
+    nxt_feature="editline in /usr/include/edit"
+    nxt_feature_incs="-I/usr/include/edit/readline"
+
+    . auto/feature
+fi
+
+if [ $nxt_found = no ]; then
+
+    # NetBSD
+
+    nxt_feature="editline in /usr/include"
+    nxt_feature_incs="-I/usr/include/readline"
+
+    . auto/feature
+fi
+
+if [ $nxt_found = yes ]; then
+    NXT_HAVE_LIBEDIT=YES
+    cat << END >> $NXT_MAKEFILE_CONF
+
+NXT_EDITLINE_CFLAGS = $nxt_feature_incs
+NXT_EDITLINE_LIB = $nxt_feature_libs
+
+default:	njs
+END
+
+else
+    NXT_HAVE_LIBEDIT=NO
+    $nxt_echo " - building interactive shell is not possible"
+
+    cat << END >> $NXT_MAKEFILE_CONF
+
+default:	libnjs
+END
+
+fi

@@ -1,0 +1,98 @@
+name: nginx-hda-bundle
+version: "1.13.8"
+summary: Nginx HDA Bundle - Dynamic Modules Power
+description: "For more details please visit: https://github.com/cryptofuture/nginx-hda-bundle/"
+
+grade: devel
+confinement: devmode
+
+apps:
+    start:
+        plugs: [network-bind]
+        command: bin/start.sh
+
+    reload:
+        plugs: [network-bind]
+        command: bin/reload.sh
+
+    stop:
+        plugs: [network-bind]
+        command: bin/stop.sh
+
+parts:
+    wrappers:
+        plugin: dump
+        source: ./extras
+    nginx:
+        plugin: autotools
+        prepare: ../../../stage_binaries.sh
+        source: https://nginx.org/download/nginx-1.13.8.tar.gz
+        build-packages:
+            - libgd-dev
+            - libgeoip-dev
+            - libpcre3-dev
+            - libperl-dev
+            - libssl-dev
+            - libxslt1-dev
+            - lsb-release
+            - zlib1g-dev
+            - libluajit-5.1-dev
+            - tar
+            - libpq-dev
+            - libpam0g-dev
+            - uuid-dev
+        configflags:
+            - --with-http_ssl_module
+            - --with-http_realip_module
+            - --with-http_addition_module
+            - --with-http_sub_module
+            - --with-http_gunzip_module
+            - --with-http_gzip_static_module
+            - --with-http_random_index_module
+            - --with-http_secure_link_module
+            - --with-http_stub_status_module
+            - --with-http_auth_request_module
+            - --with-http_xslt_module=dynamic
+            - --with-http_image_filter_module=dynamic
+            - --with-http_geoip_module=dynamic
+            - --with-stream=dynamic
+            - --with-stream_ssl_module
+            - --with-stream_ssl_preread_module
+            - --with-stream_geoip_module=dynamic
+            - --with-http_perl_module=dynamic
+            - --with-mail=dynamic
+            - --with-mail_ssl_module
+            - --add-module=../../../stage/modules/njs/nginx
+            - --add-module=../../../stage/modules/ngx_pagespeed
+            - --add-module=../../../stage/modules/headers-more-nginx-module
+            - --add-module=../../../stage/modules/lua-nginx-module
+            - --add-module=../../../stage/modules/naxsi/naxsi_src/
+            - --add-module=../../../stage/modules/nginx-length-hiding-filter-module
+            - --add-module=../../../stage/modules/Session-Binding-Proxy/nginx_session_binding_proxy_module
+            - --add-module=../../../stage/modules/ngx_devel_kit
+            - --add-module=../../../stage/modules/ngx_http_upstream_order
+            - --add-module=../../../stage/modules/rds-json-nginx-module
+            - --add-module=../../../stage/modules/testcookie-nginx-module
+            - --add-module=../../../stage/modules/ngx_brotli
+            - --add-module=../../../stage/modules/ngx_postgres
+            - --add-module=../../../stage/modules/nchan
+            - --add-module=../../../stage/modules/ngx_http_auth_pam_module
+            - --add-module=../../../stage/modules/echo-nginx-module
+            - --add-module=../../../stage/modules/nginx-upstream-fair
+            - --add-module=../../../stage/modules/ngx_cache_purge
+            - --add-module=../../../stage/modules/ngx-fancyindex
+            - --add-module=../../../stage/modules/nginx-upload-progress-module
+            - --add-module=../../../stage/modules/ngx_http_substitutions_filter_module
+            - --add-module=../../../stage/modules/graphite-nginx-module
+            - --add-module=../../../stage/modules/nginx-module-vts
+            - --add-module=../../../stage/modules/nginx-ct
+            - --add-module=../../../stage/modules/nginx-rtmp-module
+            - --add-module=../../../stage/modules/nginx-ts-module
+            - --add-module=../../../stage/modules/nginx-module-sts
+            - --add-module=../../../stage/modules/nginx-module-stream-sts
+            - --with-threads
+            - --with-http_slice_module
+            - --with-file-aio
+            - --with-http_v2_module
+        organize:
+            sbin: bin
