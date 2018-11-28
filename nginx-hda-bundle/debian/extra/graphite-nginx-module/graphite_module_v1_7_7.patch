@@ -1,0 +1,123 @@
+diff --git a/src/event/ngx_event_openssl.c b/src/event/ngx_event_openssl.c
+index 2c4e114..98ae6ba 100644
+--- a/src/event/ngx_event_openssl.c
++++ b/src/event/ngx_event_openssl.c
+@@ -1228,6 +1228,16 @@ ngx_ssl_handshake(ngx_connection_t *c)
+ 
+     ngx_ssl_clear_error(c->log);
+ 
++#if (NGX_GRAPHITE)
++    struct timeval tp;
++    if (c->ssl->handshake_process == 0) {
++        c->ssl->handshake_process = 1;
++        ngx_gettimeofday(&tp);
++        c->ssl->handshake_start_sec = tp.tv_sec;
++        c->ssl->handshake_start_msec = tp.tv_usec / 1000;
++    }
++#endif
++
+     n = SSL_do_handshake(c->ssl->connection);
+ 
+     ngx_log_debug1(NGX_LOG_DEBUG_EVENT, c->log, 0, "SSL_do_handshake: %d", n);
+@@ -1307,6 +1317,13 @@ ngx_ssl_handshake(ngx_connection_t *c)
+ #endif
+ #endif
+ 
++#if (NGX_GRAPHITE)
++        c->ssl->handshake_process = 0;
++        ngx_gettimeofday(&tp);
++        c->ssl->handshake_end_sec = tp.tv_sec;
++        c->ssl->handshake_end_msec = tp.tv_usec / 1000;
++#endif
++
+         return NGX_OK;
+     }
+ 
+diff --git a/src/event/ngx_event_openssl.h b/src/event/ngx_event_openssl.h
+index 2a14980..daac038 100644
+--- a/src/event/ngx_event_openssl.h
++++ b/src/event/ngx_event_openssl.h
+@@ -79,6 +79,14 @@ struct ngx_ssl_connection_s {
+     ngx_event_handler_pt        saved_read_handler;
+     ngx_event_handler_pt        saved_write_handler;
+ 
++#if (NGX_GRAPHITE)
++    ngx_uint_t                  handshake_process;
++    time_t                      handshake_start_sec;
++    ngx_msec_t                  handshake_start_msec;
++    time_t                      handshake_end_sec;
++    ngx_msec_t                  handshake_end_msec;
++#endif
++
+     unsigned                    handshaked:1;
+     unsigned                    renegotiation:1;
+     unsigned                    buffer:1;
+diff --git a/src/http/modules/ngx_http_gzip_filter_module.c b/src/http/modules/ngx_http_gzip_filter_module.c
+index 287fd36..656dc75 100644
+--- a/src/http/modules/ngx_http_gzip_filter_module.c
++++ b/src/http/modules/ngx_http_gzip_filter_module.c
+@@ -424,7 +424,16 @@ ngx_http_gzip_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
+             }
+ 
+ 
++#if (NGX_GRAPHITE)
++            struct timeval start_tp;
++            ngx_gettimeofday(&start_tp);
++#endif
+             rc = ngx_http_gzip_filter_deflate(r, ctx);
++#if (NGX_GRAPHITE)
++            struct timeval stop_tp;
++            ngx_gettimeofday(&stop_tp);
++            r->gzip_time += (stop_tp.tv_sec - start_tp.tv_sec) * 1000 + (stop_tp.tv_usec - start_tp.tv_usec) / 1000;
++#endif
+ 
+             if (rc == NGX_OK) {
+                 break;
+diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+index 7e40e78..3d7336d 100644
+--- a/src/http/ngx_http_core_module.c
++++ b/src/http/ngx_http_core_module.c
+@@ -1384,7 +1395,17 @@ ngx_http_core_content_phase(ngx_http_request_t *r,
+ 
+     if (r->content_handler) {
+         r->write_event_handler = ngx_http_request_empty_handler;
+-        ngx_http_finalize_request(r, r->content_handler(r));
++#if (NGX_GRAPHITE)
++        struct timeval start_tp;
++        ngx_gettimeofday(&start_tp);
++#endif
++        ngx_int_t rc = r->content_handler(r);
++#if (NGX_GRAPHITE)
++        struct timeval stop_tp;
++        ngx_gettimeofday(&stop_tp);
++        r->content_time = (stop_tp.tv_sec - start_tp.tv_sec) * 1000 + (stop_tp.tv_usec - start_tp.tv_usec) / 1000;
++#endif
++        ngx_http_finalize_request(r, rc);
+         return NGX_OK;
+     }
+ 
+diff --git a/src/http/ngx_http_request.h b/src/http/ngx_http_request.h
+index 283c582..68690ec 100644
+--- a/src/http/ngx_http_request.h
++++ b/src/http/ngx_http_request.h
+@@ -580,6 +580,20 @@ struct ngx_http_request_s {
+ 
+     unsigned                          http_minor:16;
+     unsigned                          http_major:16;
++
++#define NGX_GRAPHITE_PATCH
++
++#if (NGX_GRAPHITE)
++    ngx_msec_int_t                    content_time;
++#endif
++
++#if ((NGX_HTTP_GZIP) && (NGX_GRAPHITE))
++    ngx_msec_int_t                    gzip_time;
++#endif
++
++#if (NGX_GRAPHITE)
++    ngx_msec_int_t                    lua_time;
++#endif
+ };
+ 
+ 

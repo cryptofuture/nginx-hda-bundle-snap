@@ -1,0 +1,3 @@
+[submodule "nginx-hda-bundle"]
+	path = nginx-hda-bundle
+	url = https://github.com/cryptofuture/nginx-hda-bundle

@@ -1,0 +1,7 @@
+*.sw[op]
+/t/*.sh
+/t/*.out
+/t/*.err
+/t/pup*
+/t/bug*/
+/prefix/

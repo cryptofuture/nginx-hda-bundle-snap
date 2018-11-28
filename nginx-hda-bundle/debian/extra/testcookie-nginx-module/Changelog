@@ -1,0 +1,84 @@
+v1.24
+*) disable caching for module variables
+
+v1.23
+*) testcookie_port_in_redirect config variable added
+
+v1.22
+*) openssl 1.1.0 compatible
+
+v1.21
+*) testcookie_refresh_status directive added (see docs)
+
+v1.20
+*) testcookie_pass directive added (see docs)
+*) can be compiled as a dynamic module
+*) changed filename to access than filter b/c testcookie technically is access module 
+
+v1.19
+*) Set Cache-Control and Expires headers to prevent caching of testcookie responses
+
+v1.18
+*) Secret len now should be more than 31 bytes
+
+v1.17
+*) Secure flag can be operated with variables
+
+v1.16
+*) Optional Secure and HttpOnly flags added for cookies
+
+v1.15
+*) Correct len for $testcookie_ok variable, thanks to GeniusGuard
+
+v1.14
+*) Always set $testcookie_ variables, thanks to GeniusGuard
+
+v1.13
+*) fixed content type on custom refresh, thanks to LoadLow@github
+
+v1.12
+*) fixed uri parsing logic
+
+v1.11
+*) fixed header injection in uri, thanks to glintik@github
+
+v1.10
+*) testcookie_ok changed to 1/0 instead of yes/no - that was done for compatibility
+with conditional logging (added to nginx 1.7.0)
+
+*) Experimental IPv6 whitelisting
+
+v1.09
+*) Secure random changed
+
+v1.08
+*) Bugfix, fixed bypass with HEAD method in redirect_via_refresh mode
+
+v1.07
+*) Default redirect code changed from 302 to 307 for HTTP 1.1+
+
+v1.06
+*) testcookie directive now can be used in location and server IF
+
+v1.05
+*) New config option testcookie_internal - enable testcookie for internal redirects
+*) Padding error patch for SlowAES attached
+
+v1.04
+*) if testcookie_arg is not set - just redirect the client infinitely w/o using fallback_url
+
+v1.03
+*) no check for Internal requests
+
+v1.02
+*) --with-ipv6 compilation is now supported with whitelisting,
+    but only for IPv6 to IPv4 mapped addresses
+*) Whitelisting autotests added
+
+v1.01
+*) --with-ipv6 compilation error fixed
+
+v1.0
+*) Keep-alive block fixed
+*) Problem with max attempts fixed
+*) var option added

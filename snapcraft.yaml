@@ -1,5 +1,5 @@
 name: nginx-hda-bundle
-version: "1.13.8"
+version: "1.15.7"
 summary: Nginx HDA Bundle - Dynamic Modules Power
 description: "For more details please visit: https://github.com/cryptofuture/nginx-hda-bundle/"
 
@@ -7,26 +7,70 @@ grade: devel
 confinement: devmode
 
 apps:
+    first-run:
+        command: bin/first-run.sh
+
     start:
         plugs: [network-bind]
         command: bin/start.sh
+
+    start-www:
+        plugs: [network-bind]
+        command: bin/start-www-data.sh
 
     reload:
         plugs: [network-bind]
         command: bin/reload.sh
 
+    reload-www:
+        plugs: [network-bind]
+        command: bin/reload-www-data.sh
+
     stop:
         plugs: [network-bind]
         command: bin/stop.sh
 
+    stop-www:
+        plugs: [network-bind]
+        command: bin/stop-www-data.sh
+
 parts:
     wrappers:
         plugin: dump
-        source: ./extras
+        source: extras
+
+    modules:
+      plugin: dump
+      source: .
+      stage: [modules]
+      prime: [-*]
+
+    binary:
+      plugin: dump
+      source: binary
+      install: |
+        mkdir -p $SNAPCRAFT_PART_INSTALL/modules/ngx_brotli/deps/brotli $SNAPCRAFT_PART_INSTALL/modules/ngx_pagespeed
+
+        tar zxf brotli.tar.gz -C $SNAPCRAFT_PART_INSTALL/modules/ngx_brotli/deps/brotli --strip-components=1
+
+        case $(uname -m) in
+        x86_64|amd64)
+          tar zxf 1.13.35.2-x64.tar.gz -C $SNAPCRAFT_PART_INSTALL/modules/ngx_pagespeed
+          ;;
+        i386|i586|i686)
+          tar zxf 1.13.35.2-ia32.tar.gz -C $SNAPCRAFT_PART_INSTALL/modules/ngx_pagespeed
+          ;;
+        *)
+          false
+        esac
+      prime: [-*]
+
     nginx:
+        after: [modules, binary, wrappers]
         plugin: autotools
-        prepare: ../../../stage_binaries.sh
-        source: https://nginx.org/download/nginx-1.13.8.tar.gz
+        prepare: |
+          echo Preparing build
+        source: http://nginx.org/download/nginx-1.15.7.tar.gz
         build-packages:
             - libgd-dev
             - libgeoip-dev
@@ -62,34 +106,34 @@ parts:
             - --with-http_perl_module=dynamic
             - --with-mail=dynamic
             - --with-mail_ssl_module
-            - --add-module=../../../stage/modules/njs/nginx
-            - --add-module=../../../stage/modules/ngx_pagespeed
-            - --add-module=../../../stage/modules/headers-more-nginx-module
-            - --add-module=../../../stage/modules/lua-nginx-module
-            - --add-module=../../../stage/modules/naxsi/naxsi_src/
-            - --add-module=../../../stage/modules/nginx-length-hiding-filter-module
-            - --add-module=../../../stage/modules/Session-Binding-Proxy/nginx_session_binding_proxy_module
-            - --add-module=../../../stage/modules/ngx_devel_kit
-            - --add-module=../../../stage/modules/ngx_http_upstream_order
-            - --add-module=../../../stage/modules/rds-json-nginx-module
-            - --add-module=../../../stage/modules/testcookie-nginx-module
-            - --add-module=../../../stage/modules/ngx_brotli
-            - --add-module=../../../stage/modules/ngx_postgres
-            - --add-module=../../../stage/modules/nchan
-            - --add-module=../../../stage/modules/ngx_http_auth_pam_module
-            - --add-module=../../../stage/modules/echo-nginx-module
-            - --add-module=../../../stage/modules/nginx-upstream-fair
-            - --add-module=../../../stage/modules/ngx_cache_purge
-            - --add-module=../../../stage/modules/ngx-fancyindex
-            - --add-module=../../../stage/modules/nginx-upload-progress-module
-            - --add-module=../../../stage/modules/ngx_http_substitutions_filter_module
-            - --add-module=../../../stage/modules/graphite-nginx-module
-            - --add-module=../../../stage/modules/nginx-module-vts
-            - --add-module=../../../stage/modules/nginx-ct
-            - --add-module=../../../stage/modules/nginx-rtmp-module
-            - --add-module=../../../stage/modules/nginx-ts-module
-            - --add-module=../../../stage/modules/nginx-module-sts
-            - --add-module=../../../stage/modules/nginx-module-stream-sts
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/njs/nginx
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_pagespeed
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/headers-more-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/lua-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/naxsi/naxsi_src/
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-length-hiding-filter-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/Session-Binding-Proxy/nginx_session_binding_proxy_module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_devel_kit
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_http_upstream_order
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/rds-json-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/testcookie-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_brotli
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_postgres
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nchan
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_http_auth_pam_module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/echo-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-upstream-fair
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_cache_purge
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx-fancyindex
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-upload-progress-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_http_substitutions_filter_module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/graphite-nginx-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-module-vts
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-ct
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-rtmp-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-ts-module
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-module-sts
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-module-stream-sts
             - --with-threads
             - --with-http_slice_module
             - --with-file-aio

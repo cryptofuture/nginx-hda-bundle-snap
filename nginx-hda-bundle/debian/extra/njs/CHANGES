@@ -1,0 +1,400 @@
+
+Changes with njs 0.2.6                                           27 Nov 2018
+
+    Core:
+
+    *) Feature: making built-in prototypes mutable.
+
+    *) Feature: making global object mutable.
+
+    *) Feature: console.time() and console.timeEnd() methods.
+
+    *) Feature: allowing variables and functions to be redeclared.
+
+    *) Feature: extending Object.defineProperty() spec conformance.
+
+    *) Feature: introduced quiet mode for CLI to handle simple expressions
+       from stdin.
+
+    *) Feature: introduced compact form of backtraces to handle stack
+       overflows.
+
+    *) Improvement: improved wording for various exceptions.
+
+    *) Bugfix: fixed closure values handling.
+
+    *) Bugfix: fixed equality operator for various value types.
+
+    *) Bugfix: fixed handling of "this" keyword in various scopes.
+
+    *) Bugfix: fixed handling non-object values in Object.keys().
+
+    *) Bugfix: fixed parsing of throw statement inside if statement.
+
+    *) Bugfix: fixed parsing of newline after throw statement.
+
+    *) Bugfix: fixed parsing of statements in if statement without newline.
+
+    *) Bugfix: fixed size uint32_t overflow in njs_array_expand().
+
+    *) Bugfix: fixed typeof operator for object_value type.
+
+    *) Bugfix: miscellaneous additional bugs have been fixed.
+
+Changes with njs 0.2.5                                           30 Oct 2018
+
+    nginx modules:
+
+    *) Bugfix: fixed counting pending events in stream module.
+
+    *) Bugfix: fixed s.off() in stream module.
+
+    *) Bugfix: fixed processing of data chunks in js_filter in stream module.
+
+    *) Bugfix: fixed http status and contentType getter in http module.
+
+    *) Bugfix: fixed http response and parent getters in http module.
+
+    Core:
+
+    *) Feature: arguments object support.
+
+    *) Feature: non-integer fractions support.
+
+    *) Improvement: handling non-array values in Array.prototype.slice().
+
+    *) Bugfix: fixed Array.prototype.length setter.
+
+    *) Bugfix: fixed njs_array_alloc() for length > 2**31.
+
+    *) Bugfix: handling int overflow in njs_array_alloc() on 32bit
+       archs.
+
+    *) Bugfix: fixed code size mismatch error message.
+
+    *) Bugfix: fixed delete operator in a loop.
+
+    *) Bugfix: fixed Object.getOwnPropertyDescriptor() for complex
+       object (inherited from Array and string values).
+
+    *) Bugfix: fixed Object.prototype.hasOwnProperty() for non-object
+       properties.
+
+    *) Bugfix: miscellaneous additional bugs have been fixed.
+
+Changes with njs 0.2.4                                           18 Aug 2018
+
+    nginx modules:
+
+    *) Change: stream module handlers are refactored.
+
+       New methods and properties:
+       s.on(), s.off(), s.allow(), s.done(), s.decline(),
+       s.deny().
+
+       Removed properties of Stream object:
+       s.OK, s.ABORT, s.AGAIN, s.DECLINED, s.ERROR (replaced
+       with s.allow(), s.done([code]), s.deny()).
+
+       s.buffer (for reading replaced with data argument of
+       the corresponding callback, for writing use s.send()).
+
+       s.fromUpstream (replaced with a callback for a corresponding
+       event).
+
+       s.eof (replaced with flags.last).
+
+    Core:
+
+    *) Feature: added Function.prototype.length.
+
+    *) Feature: introduced sandboxing mode.
+
+    *) Improvement: added exception strings where appropriate.
+
+    *) Improvement: improved wording for primitive type conversion
+       exception.
+
+    *) Bugfix: throwing TypeError for attempts to change frozen
+       properties.
+
+    *) Bugfix: fixed Object.defineProperty() for existing properties.
+
+    *) Bugfix: respecting the enumerable attribute while iterating
+       by for in.
+
+    *) Bugfix: respecting writable attribute for property handlers.
+
+    *) Bugfix: fixed exception handling in arguments of a function.
+
+    *) Bugfix: fixed Object.prototype.toString for different
+       value types.
+
+    *) Bugfix: fixed Object() constructor for object types arguments.
+
+    *) Bugfix: fixed comparison of objects and strings.
+
+    *) Bugfix: fixed String.slice() for undefined arguments.
+
+    *) Bugfix: miscellaneous additional bugs have been fixed.
+
+Changes with njs 0.2.3                                           31 Jul 2018
+
+    nginx modules:
+
+    *) Bugfix: making a subrequest from a Reply object caused
+        a segmentation fault.
+
+    *) Bugfix: getting the parent property of the main Request
+        object caused a segmentation fault.
+
+    Core:
+
+    *) Feature: added the pretty string representation for values.
+
+    *) Feature: correctly printing floating point numbers.
+
+    *) Feature: correctly parsing floating point numbers.
+
+    *) Feature: String.bytesFrom() method (decoding hex, base64,
+        base64url into a byte string).
+
+    *) Feature: String.padStart() and String.padEnd() methods.
+
+    *) Feature: added support of binary literals.
+
+    *) Improvement: added information about illegal token in number parsing.
+
+    *) Improvement: allowed uppercased O in octal literal values.
+
+    *) Improvement: added support for multiple arguments in console.log().
+
+    *) Bugfix: fixed applying call() to methods of external values.
+
+    *) Bugfix: fixed addition operator applied to an object.
+
+    *) Bugfix: fixed exception handling in njs_vm_value_to_ext_string().
+
+    *) Bugfix: fixed Number() with boolean, null and undefined arguments.
+
+    *) Bugfix: fixed error handling of setting non-numeric Array.length.
+
+    *) Bugfix: fixed autocompletion for global objects.
+
+    *) Bugfix: miscellaneous additional bugs have been fixed.
+
+Changes with njs 0.2.2                                           19 Jun 2018
+
+    nginx modules:
+
+    *) Change: merged HTTP Response and Reply into Request.
+        New members of Request:
+        req.status (res.status)
+        req.parent (reply.parent)
+        req.requestBody (req.body)
+        req.responseBody (reply.body)
+        req.headersIn (req.headers)
+        req.headersOut (res.headers)
+        req.sendHeader() (res.sendHeader())
+        req.send() (res.send())
+        req.finish() (res.finish())
+        req.return() (res.return())
+
+        Deprecated members of Request:
+        req.body (use req.requestBody or req.responseBody)
+        req.headers (use req.headersIn or req.headersOut)
+        req.response
+
+        The deprecated properties will be removed in the following
+        releases.
+
+    *) Feature: HTTP internalRedirect() method.
+
+    Core:
+
+    *) Bugfix: fixed heap-buffer-overflow in crypto.createHmac().
+
+Changes with njs 0.2.1                                           31 May 2018
+
+    nginx modules:
+
+    *) Feature: HTTP request body getter.
+
+    *) Improvement: moved njs vm to the main configuration.
+
+    *) Improvement: improved logging for js_set and js_content directives.
+
+    *) Improvement: setting status code to 500 by default in
+       js_content handler.
+
+    *) Improvement: added the debug for the returned status code in
+       js_content.
+
+    *) Bugfix: fixed error logging in js_include.
+
+    Core:
+
+    *) Feature: added array length setter.
+
+    *) Improvement: public header cleanup. njscript.h is renamed to njs.h.
+
+    *) Bugfix: fixed crypto update() method after digest() is called.
+
+    *) Bugfix: fixed crypto.createHmac() for keys with size >= alg size
+       and < 64.
+
+    *) Bugfix: fixed JSON.stringify() for arrays with empty cells.
+
+    *) Bugfix: fixed exception type for unsupported types in
+       JSON.stringify().
+
+    *) Bugfix: fixed handling of undefined arguments of functions.
+
+    *) Bugfix: fixed handling of missing arg of
+       Object.getOwnPropertyDescriptor().
+
+    *) Bugfix: fixed handling of properties in
+       Object.getOwnPropertyDescriptor().
+
+    *) Bugfix: fixed the writeable flag of Array.length property.
+
+    *) Bugfix: fixed return value type of clearTimeout().
+
+    *) Bugfix: fixed njs_vm_external_bind().
+
+    *) Bugfix: miscellaneous additional bugs have been fixed.
+
+Changes with njs 0.2.0                                           3 Apr 2018
+
+    *) Feature: reporting njs version by CLI.
+
+    *) Feature: textual description for type converting exceptions.
+
+    *) Feature: setTimeout() and clearTimeout() methods.
+
+    *) Feature: Byte string to hex, base64, base64url encodings.
+
+    *) Feature: Node.js style crypto methods.
+
+    *) Feature: HTTP and stream warn() and error() methods.
+
+    *) Feature: HTTP subrequest() method.
+
+    *) Feature: HTTP return() method.
+
+    *) Bugfix: miscellaneous bugs have been fixed in the core and
+       interactive shell.
+
+Changes with njs 0.1.15                                          20 Nov 2017
+
+    *) Feature: Error, EvalError, InternalError, RangeError,
+       ReferenceError, SyntaxError, TypeError, URIError objects.
+
+    *) Feature: octal literals support.
+
+    *) Feature: File system access fs.readFile(), fs.readFileSync(),
+       fs.appendFile(),  fs.appendFileSync(), fs.writeFile(),
+       fs.writeFileSync() methods.
+
+    *) Feature: nginx modules print backtrace on exception.
+
+    *) Bugfix: miscellaneous bugs have been fixed.
+
+Changes with njs 0.1.14                                          09 Oct 2017
+
+    *) Feature: JSON object.
+
+    *) Feature: object level completions in interactive shell.
+
+    *) Feature: various configure improvements.
+
+    *) Bugfix: miscellaneous bugs have been fixed in the core and
+       interactive shell.
+
+Changes with njs 0.1.13                                          31 Aug 2017
+
+    *) Feature: console.log() and console.help() methods in interactive
+       shell.
+
+    *) Feature: interactive shell prints backtrace on exception.
+
+    *) Feature: interactive shell by default if libedit is available.
+
+    *) Bugfix: processing of large files from stdin in command line mode.
+
+    *) Bugfix: improved editline detection.
+
+Changes with njs 0.1.12                                          08 Aug 2017
+
+    *) Feature: Interactive shell.
+
+    *) Bugfix: in Object.isSealed().
+
+Changes with njs 0.1.11                                          27 Jun 2017
+
+    *) Feature: Object.keys(), Object.prototype.hasOwnProperty() methods.
+
+    *) Feature: Object.defineProperty(), Object.defineProperties(),
+       Object.getOwnPropertyDescriptor() methods.
+
+    *) Feature: Object.getPrototypeOf(), Object.prototype.isPrototypeOf()
+       methods.
+
+    *) Feature: Object.preventExtensions(), Object.isExtensible(),
+       Object.freeze(), Object.isFrozen(), Object.seal(), Object.isSealed()
+       methods.
+
+    *) Feature: scientific notation literals support.
+
+    *) Feature: hexadecimal literals support.
+
+    *) Bugfix: processing of large array indexes.
+
+    *) Bugfix: in parseInt() and Date.parse().
+
+Changes with njs 0.1.10                                          04 Apr 2017
+
+    *) Feature: nested functions and function closures.
+
+    *) Feature: Array.of(), Array.prototype.fill(), Array.prototype.find(),
+       Array.prototype.findIndex() methods.
+
+    *) Bugfix: miscellaneous bugs and segmentation faults have been fixed.
+
+Changes with njs 0.1.9                                           01 Feb 2017
+
+    *) Bugfix: global variables were not initialized when njs was used
+       in nginx.
+
+Changes with njs 0.1.8                                           24 Jan 2017
+
+    *) Change: the "strict" mode is enforced, variables must be explicitly
+       declared.
+
+    *) Feature: "for" and "for-in" loops support variable declaration.
+
+    *) Bugfix: global and function scopes have been fixed.
+
+    *) Bugfix: now "for-in" loop does not discard the last value of property
+       variable.
+
+    *) Bugfix: miscellaneous bugs and segmentation faults have been fixed.
+
+Changes with njs 0.1.7                                           27 Dec 2016
+
+    *) Change: the "js_include" directive has been disabled at server and
+       location levels.
+
+    *) Feature: exponentiation operators.
+
+    *) Bugfix: miscellaneous bugs and segmentation faults have been fixed.
+
+Changes with njs 0.1.6                                           13 Dec 2016
+
+    *) Change: the "js_set" directive has been disabled at server and
+       location levels.
+
+    *) Feature: ES6 Math methods.
+
+    *) Bugfix: miscellaneous bugs and segmentation faults have been fixed.
+
