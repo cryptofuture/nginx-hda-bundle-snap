@@ -34,7 +34,7 @@ I working remotely and income is unstable, so every little bit helps.
 
 Also it would be nice if you provide, a note on `admin@hda.me` after making a donation with information what you like and what you want to improve. So, I would consider giving more time and support to particular project.
 
-I also open to resonable work offers, especially if offer would be close to a field or project I work/worked with.
+I also open to resonable work offers, especially if offer would be close to a field or project I work with.
 
 #### E-money & Fiat
 
@@ -58,7 +58,7 @@ Address is `0x23459a89eAc054bdAC1c13eB5cCb39F42574C26a`
 
 #### Other 
 
-I also could provide you with some relatively cheap "hardware" donation options directly to my PO Box, if I found you trustworthy, and you prefer real gifts. Ask for details on `admin@hda.me`
+I could provide you with some relatively cheap "hardware" donation options directly to my PO Box, if you prefer real gifts. Ask for details on `admin@hda.me`
 
 ### FAQ
 
