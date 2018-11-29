@@ -1,6 +1,7 @@
 ## Nginx HDA Bundle Snap Package
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/nginx-hda-bundle)
 >Snap package mainly created for use in distributions outside Ubuntu family. 
+
 >Using [Nginx HDA Bundle PPA](https://launchpad.net/~hda-me/+archive/ubuntu/nginx-stable) is prefered in Ubuntu
 ### How to install
 You can install with `sudo snap install nginx-hda-bundle --edge --devmode`
