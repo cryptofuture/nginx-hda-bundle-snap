@@ -55,9 +55,7 @@ Address is `1N5czHaoSLukFSTq2ZJujaWGjkmBxv2dT9`
 Address is `0xf449f8c17a056e9bfbefe39637c38806246cb2c9`
 ##### Ethereum
 Address is `0x23459a89eAc054bdAC1c13eB5cCb39F42574C26a`
-
-#### Other 
-
+##### Other 
 I could provide you with some relatively cheap "hardware" donation options directly to my PO Box, if you prefer real gifts. Ask for details on `admin@hda.me`
 
 ### FAQ
