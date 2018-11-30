@@ -69,7 +69,7 @@ You only need root, to be able to run under `www-data`, write to `/etc/nhb-snap/
 
 Check: https://docs.snapcraft.io/installing-snapd/6735
 
-> Why no TLSv1.3 support in snap
+> Why no TLSv1.3 support in snap?
 
 Even in bionic (18.04) Ubuntu ships openssl 1.1.0, and I don't want to support openssl in Ubuntu on my own, since it needs critical security updates, which I'll not be able to provide as fast as Canonical security team.
 
