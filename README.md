@@ -69,6 +69,12 @@ You only need root, to be able to run under `www-data`, write to `/etc/nhb-snap/
 
 Check: https://docs.snapcraft.io/installing-snapd/6735
 
+> Why no TLSv1.3 support in snap
+
+Even in bionic (18.04) Ubuntu ships openssl 1.1.0, and I don't want to support openssl in Ubuntu on my own, since it needs critical security updates, which I'll not be able to provide as fast as Canonical security team.
+
+Here is a thing, snaps are builded inside using xenial (Ubuntu 16.04) base, so if you think using snap would magically provide you always with super fresh sets of libs, this is not a true.
+
 ### Building snap package from scratch
 
 Short: You need snapcraft, lxd for snapcraft cleanbuild and init and upgrade submodules
