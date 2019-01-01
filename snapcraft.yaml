@@ -1,5 +1,5 @@
 name: nginx-hda-bundle
-version: "1.15.7"
+version: "1.15.8"
 summary: Nginx HDA Bundle - Dynamic Modules Power
 description: "For more details please visit: https://github.com/cryptofuture/nginx-hda-bundle/"
 
@@ -70,7 +70,7 @@ parts:
         plugin: autotools
         prepare: |
           echo Preparing build
-        source: http://nginx.org/download/nginx-1.15.7.tar.gz
+        source: nginx-1.15.8.tar.gz
         build-packages:
             - libgd-dev
             - libgeoip-dev
