@@ -1,5 +1,5 @@
 name: nginx-hda-bundle
-version: "1.15.8"
+version: "1.15.12"
 summary: Nginx HDA Bundle - Dynamic Modules Power
 description: "For more details please visit: https://github.com/cryptofuture/nginx-hda-bundle/"
 
@@ -69,8 +69,12 @@ parts:
         after: [modules, binary, wrappers]
         plugin: autotools
         prepare: |
-          echo Preparing build
-        source: nginx-1.15.8.tar.gz
+            echo 'Preparing build'
+            echo "deb-src http://ppa.launchpad.net/maxmind/ppa/ubuntu bionic main " >> /etc/apt/sources.list
+            echo "deb http://ppa.launchpad.net/maxmind/ppa/ubuntu bionic main " >> /etc/apt/sources.list
+            apt-key adv --keyserver keyserver.ubuntu.com --keyserver-options http-proxy=http://157.230.244.41:3128/ --recv-keys DE1997DCDE742AFA
+            apt update
+        source: nginx-1.15.12.tar.gz
         build-packages:
             - libgd-dev
             - libgeoip-dev
@@ -85,6 +89,7 @@ parts:
             - libpq-dev
             - libpam0g-dev
             - uuid-dev
+            - libmaxminddb-dev
         configflags:
             - --with-http_ssl_module
             - --with-http_realip_module
@@ -134,6 +139,7 @@ parts:
             - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-ts-module
             - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-module-sts
             - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/nginx-module-stream-sts
+            - --add-dynamic-module=$SNAPCRAFT_STAGE/modules/ngx_http_geoip2_module
             - --with-threads
             - --with-http_slice_module
             - --with-file-aio

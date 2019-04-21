@@ -86,7 +86,7 @@ git clone https://github.com/cryptofuture/nginx-hda-bundle-snap
 cd nginx-hda-bundle-snap
 git submodule init; git submodule update
 cd nginx-hda-bundle
-git submodule init; git submodule update
+git submodule init; git submodule update; git submodule update --remote --recursive
 cd ..
 ./modules-folder-create.sh
 snapcraft cleanbuild
