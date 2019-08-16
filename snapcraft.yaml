@@ -1,5 +1,5 @@
 name: nginx-hda-bundle
-version: "1.17.2"
+version: "1.17.3"
 summary: Nginx HDA Bundle - Dynamic Modules Power
 description: "For more details please visit: https://github.com/cryptofuture/nginx-hda-bundle/"
 
@@ -74,7 +74,7 @@ parts:
             echo "deb http://ppa.launchpad.net/maxmind/ppa/ubuntu bionic main " >> /etc/apt/sources.list
             apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE1997DCDE742AFA
             apt update
-        source: nginx-1.17.2.tar.gz
+        source: nginx-1.17.3.tar.gz
         build-packages:
             - libgd-dev
             - libgeoip-dev
